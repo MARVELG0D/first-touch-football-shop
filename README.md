@@ -1,4 +1,5 @@
 PERTANYAAN TUGAS INDIVIDU 2
+
 1. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).
 2. Buatlah bagan yang berisi request client ke web aplikasi berbasis Django beserta responnya dan jelaskan pada bagan tersebut kaitan antara urls.py, views.py, models.py, dan berkas html.
 3. Jelaskan peran settings.py dalam proyek Django!
@@ -17,3 +18,29 @@ PERTANYAAN TUGAS INDIVIDU 2
 5) Menurut saya dan menurut Django-nya sendiri, Django dipilih sebagai framework pertama karena sifatnya yang “fully-loaded”, artinya hampir semua kebutuhan dasar pengembangan web sudah disediakan, mulai dari ORM untuk database, user authentication, hingga template engine. Hal ini memudahkan pemula karena tidak perlu repot menambahkan banyak library eksternal sejak awal. Selain itu, struktur Django yang berbasis MVT (Model–View–Template) membuat alurnya jelas dan mudah dipahami, apalagi jika nantinya ingin belajar framework lain yang serupa dengan pola MVC. Django juga dikenal mendorong best practice dalam pengembangan, jadi sejak awal kita sudah terbiasa dengan kode yang teratur dan rapi. Ditambah lagi, komunitas Django sangat besar dan dokumentasinya lengkap, sehingga kalau mengalami kesulitan akan lebih mudah menemukan solusi.
 
 6) Tutorial 1 kemarin sudah cukup bagus. Tidak hanya menyuruh mahasiswa mengikuti instruksi dan copy-paste code, tetapi juga mereka menjelaskan definisi dan alur dari setiap langkah yang ada di tutorial tersebut. Tidak ada masalah pada tutorial 1 kemarin.
+
+PERTANYAAN TUGAS INDIVIDU 3
+
+1. Jelaskan mengapa kita memerlukan data delivery dalam pengimplementasian sebuah platform?
+2. Menurutmu, mana yang lebih baik antara XML dan JSON? Mengapa JSON lebih populer dibandingkan XML?
+3. Jelaskan fungsi dari method is_valid() pada form Django dan mengapa kita membutuhkan method tersebut?
+4. Mengapa kita membutuhkan csrf_token saat membuat form di Django? Apa yang dapat terjadi jika kita tidak menambahkan csrf_token pada form Django? Bagaimana hal tersebut dapat dimanfaatkan oleh penyerang?
+5. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).
+6. Apakah ada feedback untuk asdos di tutorial 2 yang sudah kalian kerjakan?
+
+7. Data delivery itu intinya cara gimana data bisa dikirim dari satu tempat ke tempat lain. Misalnya dari frontend (tampilan web) ke backend (server), atau dari server ke server lain. Nah, jalurnya bisa lewat HTTP, WebSocket, gRPC, atau protokol lainnya. Dengan adanya data delivery, data bisa ngalir dari satu bagian ke bagian lain, tetap konsisten, dan platform bisa berfungsi sesuai tujuan. Format yang saya gunakan sebagai data delivery di tugas 3 ini adalah XML dan JSON.
+
+8. Menurut saya, JSON lebih baik. Pertama, bagi saya, JSON lebih mudah dibaca. Kedua, API modern sekarang banyak menggunakan JSON sebagai standar. Sudah jarang sekali yang menggunakan XML. Kenapa JSON lebih populer? JSON lebih compact, fast, convenient, dan mudah di-load di JavaScript (yang mana adalah bahasa pemrograman yang populer sekarang) dibandingkan XML yang lebih slow dan sintaks yang agak sulit dibaca.
+
+9. Di Django, setiap kali kita bikin form, data yang masuk dari user itu harus dicek dulu apakah sesuai aturan atau nggak. Nah, di sinilah fungsi utama is_valid(). Saat kita manggil method ini, Django akan ngecek semua field di form: apakah ada yang kosong padahal wajib diisi, apakah formatnya bener (contoh: email beneran email, angka nggak berisi huruf), dan apakah sesuai aturan validasi lain yang kita tentuin. Kalau data valid, Django bakal nyimpen hasilnya di cleaned_data, yaitu data yang udah aman dan siap dipakai. Tapi kalau ada yang salah, semua error akan dikumpulin di form.errors, jadi kita bisa kasih feedback ke user.
+
+10. csrf_token ini ada karena ada suatu jenis serangan bernama CSRF (Cross-Site Request Forgery). Cara kerja CSRF adalah: misal kita login ke suatu website dan tanpa sengaja buka link di tab lain. Link itu ngirim request ke website yang kita login sesuai keinginan penyerang. Karena kita sudah login, maka website menganggap request itu sah. Nah, di sinilah fungsi csrf_token. Django secara otomatis ngasih token unik di setiap form. Token ini wajib ikut terkirim bareng request POST. Jadi, kalau ada request palsu yang dikirim dari luar (misalnya lewat link jebakan), request itu bakal ditolak karena tokennya nggak cocok. Kalau kita bikin form di Django tapi nggak pakai csrf_token, aplikasi kita jadi rawan. Penyerang bisa bikin user ngelakuin aksi berbahaya tanpa sadar, misalnya ganti password, hapus data, atau transaksi ilegal. Artinya, csrf_token ini lapisan keamanan penting biar aplikasi kita nggak gampang dipermainkan sama attacker.
+
+11. Pertama, saya membuat 4 function baru yang akan me-return HttpResponse di views.py, yaitu show_xml, show_json, show_xml_by_id, dan show_json_by_id. Tidak lupa menambahkan routing url masing-masing views tadi ke urls.py. Kemudian, saya membuat add_product.html untuk menambahkan produk baru dan product_detail.html yang berisi detail dari produk. Oh iya, tidak lupa juga membuat forms.py dengan fields yang sesuai dengan tema "football shop". Kemudian setelah semua ditambahkan, saya coba runserver untuk melihat perubahannya. Jika sudah sesuai harapan, sudah bisa di-commit ke github.
+
+12. tutorial 2 sudah bagus dan asdos sudah sangat sigap menjawab pertanyaan mahasiswa. ya itu saja feedbacknya.
+
+![alt text](image.png)
+![alt text](image-1.png)
+![alt text](image-2.png)
+![alt text](image-3.png)

@@ -1,4 +1,4 @@
-PERTANYAAN TUGAS INDIVIDU 2
+*****PERTANYAAN TUGAS INDIVIDU 2*****
 
 1. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).
 2. Buatlah bagan yang berisi request client ke web aplikasi berbasis Django beserta responnya dan jelaskan pada bagan tersebut kaitan antara urls.py, views.py, models.py, dan berkas html.
@@ -19,7 +19,7 @@ PERTANYAAN TUGAS INDIVIDU 2
 
 6) Tutorial 1 kemarin sudah cukup bagus. Tidak hanya menyuruh mahasiswa mengikuti instruksi dan copy-paste code, tetapi juga mereka menjelaskan definisi dan alur dari setiap langkah yang ada di tutorial tersebut. Tidak ada masalah pada tutorial 1 kemarin.
 
-PERTANYAAN TUGAS INDIVIDU 3
+*****PERTANYAAN TUGAS INDIVIDU 3*****
 
 1. Jelaskan mengapa kita memerlukan data delivery dalam pengimplementasian sebuah platform?
 2. Menurutmu, mana yang lebih baik antara XML dan JSON? Mengapa JSON lebih populer dibandingkan XML?
@@ -28,19 +28,38 @@ PERTANYAAN TUGAS INDIVIDU 3
 5. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).
 6. Apakah ada feedback untuk asdos di tutorial 2 yang sudah kalian kerjakan?
 
-7. Data delivery itu intinya cara gimana data bisa dikirim dari satu tempat ke tempat lain. Misalnya dari frontend (tampilan web) ke backend (server), atau dari server ke server lain. Nah, jalurnya bisa lewat HTTP, WebSocket, gRPC, atau protokol lainnya. Dengan adanya data delivery, data bisa ngalir dari satu bagian ke bagian lain, tetap konsisten, dan platform bisa berfungsi sesuai tujuan. Format yang saya gunakan sebagai data delivery di tugas 3 ini adalah XML dan JSON.
+1) Data delivery itu intinya cara gimana data bisa dikirim dari satu tempat ke tempat lain. Misalnya dari frontend (tampilan web) ke backend (server), atau dari server ke server lain. Nah, jalurnya bisa lewat HTTP, WebSocket, gRPC, atau protokol lainnya. Dengan adanya data delivery, data bisa ngalir dari satu bagian ke bagian lain, tetap konsisten, dan platform bisa berfungsi sesuai tujuan. Format yang saya gunakan sebagai data delivery di tugas 3 ini adalah XML dan JSON.
 
-8. Menurut saya, JSON lebih baik. Pertama, bagi saya, JSON lebih mudah dibaca. Kedua, API modern sekarang banyak menggunakan JSON sebagai standar. Sudah jarang sekali yang menggunakan XML. Kenapa JSON lebih populer? JSON lebih compact, fast, convenient, dan mudah di-load di JavaScript (yang mana adalah bahasa pemrograman yang populer sekarang) dibandingkan XML yang lebih slow dan sintaks yang agak sulit dibaca.
+2) Menurut saya, JSON lebih baik. Pertama, bagi saya, JSON lebih mudah dibaca. Kedua, API modern sekarang banyak menggunakan JSON sebagai standar. Sudah jarang sekali yang menggunakan XML. Kenapa JSON lebih populer? JSON lebih compact, fast, convenient, dan mudah di-load di JavaScript (yang mana adalah bahasa pemrograman yang populer sekarang) dibandingkan XML yang lebih slow dan sintaks yang agak sulit dibaca.
 
-9. Di Django, setiap kali kita bikin form, data yang masuk dari user itu harus dicek dulu apakah sesuai aturan atau nggak. Nah, di sinilah fungsi utama is_valid(). Saat kita manggil method ini, Django akan ngecek semua field di form: apakah ada yang kosong padahal wajib diisi, apakah formatnya bener (contoh: email beneran email, angka nggak berisi huruf), dan apakah sesuai aturan validasi lain yang kita tentuin. Kalau data valid, Django bakal nyimpen hasilnya di cleaned_data, yaitu data yang udah aman dan siap dipakai. Tapi kalau ada yang salah, semua error akan dikumpulin di form.errors, jadi kita bisa kasih feedback ke user.
+3) Di Django, setiap kali kita bikin form, data yang masuk dari user itu harus dicek dulu apakah sesuai aturan atau nggak. Nah, di sinilah fungsi utama is_valid(). Saat kita manggil method ini, Django akan ngecek semua field di form: apakah ada yang kosong padahal wajib diisi, apakah formatnya bener (contoh: email beneran email, angka nggak berisi huruf), dan apakah sesuai aturan validasi lain yang kita tentuin. Kalau data valid, Django bakal nyimpen hasilnya di cleaned_data, yaitu data yang udah aman dan siap dipakai. Tapi kalau ada yang salah, semua error akan dikumpulin di form.errors, jadi kita bisa kasih feedback ke user.
 
-10. csrf_token ini ada karena ada suatu jenis serangan bernama CSRF (Cross-Site Request Forgery). Cara kerja CSRF adalah: misal kita login ke suatu website dan tanpa sengaja buka link di tab lain. Link itu ngirim request ke website yang kita login sesuai keinginan penyerang. Karena kita sudah login, maka website menganggap request itu sah. Nah, di sinilah fungsi csrf_token. Django secara otomatis ngasih token unik di setiap form. Token ini wajib ikut terkirim bareng request POST. Jadi, kalau ada request palsu yang dikirim dari luar (misalnya lewat link jebakan), request itu bakal ditolak karena tokennya nggak cocok. Kalau kita bikin form di Django tapi nggak pakai csrf_token, aplikasi kita jadi rawan. Penyerang bisa bikin user ngelakuin aksi berbahaya tanpa sadar, misalnya ganti password, hapus data, atau transaksi ilegal. Artinya, csrf_token ini lapisan keamanan penting biar aplikasi kita nggak gampang dipermainkan sama attacker.
+4) csrf_token ini ada karena ada suatu jenis serangan bernama CSRF (Cross-Site Request Forgery). Cara kerja CSRF adalah: misal kita login ke suatu website dan tanpa sengaja buka link di tab lain. Link itu ngirim request ke website yang kita login sesuai keinginan penyerang. Karena kita sudah login, maka website menganggap request itu sah. Nah, di sinilah fungsi csrf_token. Django secara otomatis ngasih token unik di setiap form. Token ini wajib ikut terkirim bareng request POST. Jadi, kalau ada request palsu yang dikirim dari luar (misalnya lewat link jebakan), request itu bakal ditolak karena tokennya nggak cocok. Kalau kita bikin form di Django tapi nggak pakai csrf_token, aplikasi kita jadi rawan. Penyerang bisa bikin user ngelakuin aksi berbahaya tanpa sadar, misalnya ganti password, hapus data, atau transaksi ilegal. Artinya, csrf_token ini lapisan keamanan penting biar aplikasi kita nggak gampang dipermainkan sama attacker.
 
-11. Pertama, saya membuat 4 function baru yang akan me-return HttpResponse di views.py, yaitu show_xml, show_json, show_xml_by_id, dan show_json_by_id. Tidak lupa menambahkan routing url masing-masing views tadi ke urls.py. Kemudian, saya membuat add_product.html untuk menambahkan produk baru dan product_detail.html yang berisi detail dari produk. Oh iya, tidak lupa juga membuat forms.py dengan fields yang sesuai dengan tema "football shop". Kemudian setelah semua ditambahkan, saya coba runserver untuk melihat perubahannya. Jika sudah sesuai harapan, sudah bisa di-commit ke github.
+5) Pertama, saya membuat 4 function baru yang akan me-return HttpResponse di views.py, yaitu show_xml, show_json, show_xml_by_id, dan show_json_by_id. Tidak lupa menambahkan routing url masing-masing views tadi ke urls.py. Kemudian, saya membuat add_product.html untuk menambahkan produk baru dan product_detail.html yang berisi detail dari produk. Oh iya, tidak lupa juga membuat forms.py dengan fields yang sesuai dengan tema "football shop". Kemudian setelah semua ditambahkan, saya coba runserver untuk melihat perubahannya. Jika sudah sesuai harapan, sudah bisa di-commit ke github.
 
-12. tutorial 2 sudah bagus dan asdos sudah sangat sigap menjawab pertanyaan mahasiswa. ya itu saja feedbacknya.
+6) tutorial 2 sudah bagus dan asdos sudah sangat sigap menjawab pertanyaan mahasiswa. ya itu saja feedbacknya.
 
 ![alt text](image.png)
 ![alt text](image-1.png)
 ![alt text](image-2.png)
 ![alt text](image-3.png)
+
+
+*****PERTANYAAN TUGAS INDIVIDU 4*****
+
+1. Apa itu Django AuthenticationForm? Jelaskan juga kelebihan dan kekurangannya.
+2. Apa perbedaan antara autentikasi dan otorisasi? Bagaiamana Django mengimplementasikan kedua konsep tersebut?
+3. Apa saja kelebihan dan kekurangan session dan cookies dalam konteks menyimpan state di aplikasi web?
+4. Apakah penggunaan cookies aman secara default dalam pengembangan web, atau apakah ada risiko potensial yang harus diwaspadai? Bagaimana Django menangani hal tersebut?
+5. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).
+
+1) AuthenticationForm adalah form bawaan Django yang digunakan untuk proses login dengan input standar berupa username dan password. Form ini secara otomatis melakukan validasi terhadap data pengguna dengan memeriksa kecocokan dengan database, sehingga developer tidak perlu menulis logika autentikasi dasar dari awal. Kelebihannya, form ini sudah terintegrasi dengan sistem autentikasi Django, aman karena menggunakan hashing password, serta mudah digunakan atau dikustomisasi jika dibutuhkan. Namun, keterbatasannya adalah form ini hanya mendukung login dengan username dan password secara default, sehingga perlu modifikasi tambahan jika ingin mendukung metode login lain seperti email atau OTP.
+
+2) Autentikasi dan otorisasi adalah dua hal yang berbeda tapi saling terkait. Autentikasi berfokus pada memverifikasi identitas pengguna (misalnya apakah username dan password yang dimasukkan benar) sementara otorisasi menentukan apa saja yang boleh dilakukan oleh pengguna setelah identitasnya terverifikasi, misalnya boleh mengakses halaman admin atau tidak. Django mengimplementasikan autentikasi lewat sistem auth bawaan, dengan fungsi seperti authenticate() dan login(), serta form seperti AuthenticationForm. Untuk otorisasi, Django menyediakan permission system yang melekat pada model dan user, misalnya is_staff, is_superuser, permission add, change, delete, dan juga decorator seperti @login_required atau @permission_required untuk mengontrol akses ke view tertentu.
+
+3) Dalam konteks web, cookies dan session sama-sama dipakai untuk menyimpan state, tapi cara kerjanya berbeda. Cookies disimpan langsung di browser pengguna, sehingga sederhana dan bisa bertahan meskipun browser ditutup, namun ukurannya terbatas dan rawan dimanipulasi atau dicuri jika tidak diamankan. Sebaliknya, session menyimpan data di sisi server dan hanya menyimpan session ID di cookie pengguna, sehingga lebih aman untuk data sensitif dan bisa menampung data lebih besar, tapi konsekuensinya server harus menanggung beban penyimpanan dan pengelolaan session, yang bisa jadi tantangan saat aplikasi perlu diskalakan.
+
+4) Cookies tidak sepenuhnya aman secara default karena bisa menjadi target serangan seperti XSS, session hijacking, atau manipulasi langsung oleh pengguna. Karena itu, data sensitif sebaiknya tidak disimpan mentah-mentah di dalam cookies. Django menangani hal ini dengan beberapa mekanisme keamanan bawaan, misalnya memberi atribut HttpOnly agar cookie tidak bisa diakses lewat JavaScript, Secure supaya hanya terkirim melalui HTTPS, pengaturan umur cookie agar otomatis kedaluwarsa, serta penggunaan tanda tangan digital atau enkripsi untuk mencegah manipulasi data. Selain itu, Django juga melengkapi proteksi dengan CSRF token untuk mencegah penyalahgunaan permintaan dari luar.
+
+5) Pertama, membuat fungsi register, login_user, dan logout_user di views.py. Tidak lupa melakukan routing dengan menambahkan path url ke urlpatterns. Kemudian, membuat html untuk halaman login dan register. Lalu, menambahkan decorator di atas beberapa fungsi agar user harus login untuk bisa mengaksesnya. Lalu juga, memodifikasi fungsi login_user untuk menyimpan cookie baru bernama last_login yang berisi timestamp terakhir kali pengguna melakukan login. Tidak lupa menghapus cookie setelah user log out dengan memodifikasi fungsi logout_user. Menghubungkan Product dengan user dengan cara menjadikan user sebagai foreign key. Finishing dengan menambahkan beberapa html code dan decorator yang belum ditambahkan sebelumnya di atas fungsi yang dibutuhkan.

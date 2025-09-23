@@ -1,5 +1,6 @@
 import uuid
 from django.db import models
+from django.contrib.auth.models import User
 
 class Product(models.Model):
     CATEGORY_CHOICES = [
@@ -10,13 +11,13 @@ class Product(models.Model):
         ('merch', 'Merchandise'),     # souvenir, topi, scarf
     ]
 
-    
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)  
     price = models.IntegerField()  
     description = models.TextField()  
     thumbnail = models.URLField(blank=True, null=True)  
-    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)  
+    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
     is_featured = models.BooleanField(default=False)  
     rating = models.FloatField(default=0.0)
     stock = models.PositiveIntegerField(default=0)

@@ -49,7 +49,7 @@ def add_product(request):
 @login_required(login_url='/login')
 def show_product(request, id):
     product = get_object_or_404(Product, pk=id)
-    product.increment_views()
+    #product.increment_views()
 
     context = {
         'product': product

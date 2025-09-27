@@ -117,4 +117,20 @@ def logout_user(request):
     response.delete_cookie('last_login')
     return response
 
+def edit_product(request, id):
+    news = get_object_or_404(Product, pk=id)
+    form = ProductForm(request.POST or None, instance=news)
+    if form.is_valid() and request.method == 'POST':
+        form.save()
+        return redirect('main:show_main')
 
+    context = {
+        'form': form
+    }
+
+    return render(request, "edit_product.html", context)
+
+def delete_product(request, id):
+    news = get_object_or_404(Product, pk=id)
+    news.delete()
+    return HttpResponseRedirect(reverse('main:show_main'))

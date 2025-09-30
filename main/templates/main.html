@@ -1,67 +1,105 @@
-<h1>First Touch</h1>
+{% extends 'base.html' %}
+{% load static %}
 
-<h5>NPM: </h5>
-<p>{{ npm }}</p>
+{% block meta %}
+<title>FirstTouch - Home</title>
+{% comment %} Tailwind CSS CDN - Pastikan ini ada di base.html Anda {% endcomment %}
+<script src="https://cdn.tailwindcss.com"></script> 
+<style>
+    /* Mengimpor font retro */
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
-<h5>Name:</h5>
-<p>{{ name }}</p>
+    @keyframes gridScroll {
+        from { transform: translateY(0px); }
+        to { transform: translateY(40px); }
+    }
 
-<h5>Class:</h5>
-<p>{{ class }}</p>
+    /* [PERBAIKAN] CSS untuk grid di hero section */
+    .hero-grid {
+        position: absolute;
+        top: -20%; /* Memastikan grid menutupi bagian atas */
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 0;
+        
+        background-image: 
+            repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(0, 255, 255, 0.15) 39px, rgba(0, 255, 255, 0.15) 41px),
+            repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(0, 255, 255, 0.15) 39px, rgba(0, 255, 255, 0.15) 41px);
 
-<a href="{% url 'main:add_product' %}">
-    <button>+ Add Product</button>
-</a>
+        /* Perspektif yang lebih kuat */
+        transform: perspective(250px) rotateX(70deg); 
+        transform-origin: bottom;
 
-<a href="{% url 'main:logout' %}">
-    <button>Logout</button>
-</a>
+        /* Animasi scroll yang halus */
+        animation: gridScroll 1.5s linear infinite;
 
-<h5>Sesi terakhir login: {{ last_login }}</h5>
+        /* Efek memudar ke kejauhan */
+        mask-image: linear-gradient(to top, black 30%, transparent 100%);
+        -webkit-mask-image: linear-gradient(to top, black 30%, transparent 100%);
+    }
+</style>
+{% endblock meta %}
 
-<hr>
+{% block content %}
+<div class="bg-white">
 
-<a href="?filter=all">
-    <button type="button">All Products</button>
-</a>
-<a href="?filter=my">
-    <button type="button">My Products</button>
-</a> 
+    <nav class="bg-gray-900 shadow-lg fixed w-full z-20 top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <a href="#" class="text-white text-2xl" style="font-family: 'Press Start 2P', cursive; text-shadow: 0 0 8px rgba(0, 255, 255, 0.7);">FirstTouch</a>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <a href="{% url 'main:add_product' %}" class="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700 transition-colors">+ Add Product</a>
+                    <div class="relative group">
+                        <button class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                            Welcome, {{ name }}
+                        </button>
+                        <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <div class="px-4 py-2 text-sm text-gray-700"><b>NPM:</b> {{ npm }}</div>
+                            <div class="px-4 py-2 text-sm text-gray-700"><b>Class:</b> {{ class }}</div>
+                            <div class="border-t border-gray-100"></div>
+                            <a href="{% url 'main:logout' %}" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-{% if not product_list %}
-<p>Belum ada data produk pada football store.</p>
-{% else %}
+    <section class="relative bg-gray-900 h-[60vh] flex items-center justify-center text-white pt-16 overflow-hidden">
+        <div class="hero-grid"></div>
+        
+        <div class="relative z-10 text-center px-4">
+            <h1 class="text-5xl md:text-6xl" style="font-family: 'Press Start 2P', cursive; text-shadow: 0 0 10px #00ffff, 3px 3px 0 #ff6b6b;">Welcome to FirstTouch</h1>
+            <p class="text-lg md:text-xl text-cyan-300 mt-4" style="font-family: monospace;">Find your favorite classic football kits and gear.</p>
+        </div>
+    </section>
 
-{% for product in product_list %}
-<div>
-    <h2>
-        <a href="{% url 'main:show_product' product.id %}">{{ product.name }}</a>
-    </h2>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="flex items-center space-x-4 mb-8 pb-4 border-b border-gray-200">
+             <a href="?filter=all" class="font-medium px-4 py-2 rounded-md {% if request.GET.filter != 'my' %}bg-green-600 text-white shadow{% else %}text-gray-600 hover:bg-gray-100{% endif %}">
+                All Products
+            </a>
+            <a href="?filter=my" class="font-medium px-4 py-2 rounded-md {% if request.GET.filter == 'my' %}bg-green-600 text-white shadow{% else %}text-gray-600 hover:bg-gray-100{% endif %}">
+                My Products
+            </a> 
+        </div>
 
-    <p>
-        <b>{{ product.get_category_display }}</b>
-        {% if product.is_featured %} | <b>Featured</b>{% endif %}
-        {% if product.is_highly_rated %} | <b>Highly Rated</b>{% endif %}
-        | <i>Brand: {{ product.brand|default:"-" }}</i> 
-        | Stock: {{ product.stock }} 
-        | Price: Rp{{ product.price }}
-    </p>
+        {% if not product_list %}
+            <div class="text-center py-16">
+                <h3 class="text-xl font-semibold text-gray-800">No Products Found</h3>
+                <p class="text-gray-500 mt-2">There are no products to display at the moment.</p>
+            </div>
+        {% else %}
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                {% for product in product_list %}
+                    {% include 'card_product.html' with product=product %}
+                {% endfor %}
+            </div>
+        {% endif %}
+    </main>
 
-    {% if product.thumbnail %}
-    <img src="{{ product.thumbnail }}" alt="thumbnail" width="150" height="100">
-    <br />
-    {% endif %}
-
-    <p>{{ product.description|truncatewords:25 }}...</p>
-
-    <p>
-        <a href="{% url 'main:show_product' product.id %}">
-        <button>View Details</button>
-        </a>
-    </p>
 </div>
-
-<hr>
-{% endfor %}
-
-{% endif %}
+{% endblock content %}

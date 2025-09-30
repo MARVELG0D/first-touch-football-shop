@@ -2,31 +2,187 @@
 
 {% block meta %}
 <title>Register</title>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+        font-family: 'Arial', sans-serif;
+        background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    body::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-image: 
+            repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(0, 255, 255, 0.1) 39px, rgba(0, 255, 255, 0.1) 41px),
+            repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(0, 255, 255, 0.1) 39px, rgba(0, 255, 255, 0.1) 41px);
+        animation: gridScroll 20s linear infinite;
+        pointer-events: none;
+    }
+    
+    @keyframes gridScroll {
+        0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
+        100% { transform: perspective(500px) rotateX(60deg) translateY(40px); }
+    }
+    
+    .login {
+        background: rgba(15, 32, 39, 0.85);
+        padding: 40px; /* DIKURANGI */
+        border-radius: 15px;
+        box-shadow: 0 0 25px rgba(0, 255, 255, 0.2);
+        border: 2px solid #00ffff;
+        max-width: 420px;
+        width: 90%;
+        position: relative;
+        z-index: 10;
+        animation: slideIn 0.5s ease-out;
+    }
+    
+    @keyframes slideIn {
+        from { opacity: 0; transform: translateY(-30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .login h1 {
+        font-family: 'Press Start 2P', cursive;
+        color: #00ffff;
+        text-align: center;
+        margin-bottom: 35px; /* DIKURANGI */
+        font-size: 24px;
+        text-shadow: 0 0 10px #00ffff, 3px 3px 0 #ff6b6b;
+        letter-spacing: 2px;
+    }
+    
+    /* ===== CSS UNTUK FORM MANUAL (RINGKAS) ===== */
+    .form-field {
+        margin-bottom: 20px; /* DIKURANGI */
+    }
+
+    .form-field label {
+        display: block;
+        color: #00ffff;
+        font-family: 'Press Start 2P', cursive;
+        text-transform: uppercase;
+        font-size: 13px;
+        margin-bottom: 8px; /* DIKURANGI */
+        text-align: left;
+    }
+
+    .form-field input {
+        width: 100%;
+        padding: 12px 15px;
+        background: rgba(0, 0, 0, 0.4);
+        border: 2px solid #00ffff;
+        border-radius: 8px;
+        color: #ffffff;
+        font-size: 16px;
+        transition: all 0.3s ease;
+    }
+
+    .form-field input:focus {
+        outline: none;
+        border-color: #ff6b6b;
+        background: rgba(0, 0, 0, 0.6);
+        box-shadow: 0 0 15px rgba(255, 107, 107, 0.5);
+    }
+
+    .form-field .helptext {
+        font-size: 12px;
+        color: #00ffff;
+        opacity: 0.7;
+        margin-top: 6px; /* DIKURANGI */
+        text-align: left;
+        line-height: 1.4;
+    }
+
+    .form-field .errorlist {
+        background: rgba(255, 107, 107, 0.2);
+        border-left: 3px solid #ff6b6b;
+        padding: 8px 10px;
+        margin-top: 6px; /* DIKURANGI */
+        color: #ffbebe;
+        border-radius: 5px;
+        font-size: 12px;
+        text-align: left;
+    }
+    
+    .login_btn {
+        width: 100%;
+        padding: 14px;
+        background: #ff6b6b; /* DIBUAT SIMPLE */
+        border: none;
+        border-radius: 8px;
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-top: 10px;
+    }
+    
+    .login_btn:hover {
+        background: #ff8e53;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+    }
+    
+    .login .login-link {
+        color: #00ffff;
+        font-size: 14px;
+        text-align: center;
+        margin-top: 20px;
+    }
+    
+    .login a {
+        color: #ff6b6b;
+        text-decoration: none;
+        font-weight: bold;
+        margin-left: 5px;
+        transition: color 0.2s ease;
+    }
+    
+    .login a:hover { color: #fff; }
+
+</style>
 {% endblock meta %}
 
 {% block content %}
-
-<div>
-    <h1>Register</h1>
+<div class="login">
+    <h1>REGISTER</h1>
 
     <form method="POST">
         {% csrf_token %}
-        <table>
-        {{ form.as_table }}
-        <tr>
-            <td></td>
-            <td><input type="submit" name="submit" value="Daftar" /></td>
-        </tr>
-        </table>
+
+        {% for field in form %}
+        <div class="form-field">
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.help_text %}
+                <div class="helptext">{{ field.help_text|safe }}</div>
+            {% endif %}
+            {% for error in field.errors %}
+                <div class="errorlist">{{ error }}</div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+
+        <input class="btn login_btn" type="submit" name="submit" value="Daftar" />
     </form>
 
-    {% if messages %}
-    <ul>
-        {% for message in messages %}
-        <li>{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
+    <div class="login-link">
+        Already have an account?
+        <a href="{% url 'main:login' %}">Login Now</a>
+    </div>
 </div>
-
 {% endblock content %}

@@ -117,20 +117,36 @@ def logout_user(request):
     response.delete_cookie('last_login')
     return response
 
+@login_required(login_url='/login/')
 def edit_product(request, id):
-    news = get_object_or_404(Product, pk=id)
-    form = ProductForm(request.POST or None, instance=news)
+    product = get_object_or_404(Product, pk=id)
+
+    if request.user != product.user:
+        messages.error(request, "You are not authorized to edit this product.")
+        return redirect('main:show_main')
+
+    form = ProductForm(request.POST or None, request.FILES or None, instance=product)
+    
     if form.is_valid() and request.method == 'POST':
         form.save()
+        messages.success(request, f"Product '{product.name}' has been updated successfully!")
         return redirect('main:show_main')
 
     context = {
-        'form': form
+        'form': form,
+        'product': product,
     }
 
     return render(request, "edit_product.html", context)
 
+@login_required(login_url='/login/')
 def delete_product(request, id):
-    news = get_object_or_404(Product, pk=id)
-    news.delete()
+    product = get_object_or_404(Product, pk=id)
+    
+    if request.user == product.user:
+        product.delete()
+        messages.success(request, f"Product '{product.name}' has been deleted.")
+    else:
+        messages.error(request, "You are not authorized to delete this product.")
+        
     return HttpResponseRedirect(reverse('main:show_main'))

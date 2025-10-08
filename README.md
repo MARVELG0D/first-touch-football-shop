@@ -81,3 +81,21 @@
 4) Flexbox dan grid itu tools modern di CSS buat ngatur tata letak elemen. Flexbox biasanya dipakai kalau mau ngatur elemen satu dimensi, entah sejajar ke kanan-kiri (row) atau atas-bawah (column). Misalnya, bikin navbar atau daftar tombol itu paling gampang pakai flexbox. Kalau grid, dia lebih cocok buat layout dua dimensi yang kompleks, kayak dashboard, halaman dengan sidebar, atau galeri foto, karena kita bisa bikin baris dan kolom dengan fleksibel. Jadi singkatnya, flexbox enak buat layout sederhana dan linear, sementara grid jagoannya layout besar yang butuh struktur lebih teratur.
 
 5) Pertama membuat fungsi edit dan delete card product yang di mana hanya bisa dilakukan jika product tersebut milikimu, dan harus login terlebih dahulu pastinya. Kemudian styling setiap halaman dengan css tailwind. sudah selesai. segitu saja.
+
+*****PERTANYAAN TUGAS INDIVIDU 6*****
+
+1. Apa perbedaan antara synchronous request dan asynchronous request?
+2. Bagaimana AJAX bekerja di Django (alur request–response)?
+3. Apa keuntungan menggunakan AJAX dibandingkan render biasa di Django?
+4. Bagaimana cara memastikan keamanan saat menggunakan AJAX untuk fitur Login dan Register di Django?
+5. Bagaimana AJAX mempengaruhi pengalaman pengguna (User Experience) pada website?
+
+1) Synchronous request mengharuskan browser menunggu hingga server menyelesaikan proses dan mengirimkan respons sebelum melanjutkan aktivitas lain, sehingga halaman bisa terasa “berhenti”. Sebaliknya, asynchronous request memungkinkan browser mengirim dan menerima data di latar belakang tanpa perlu memuat ulang halaman, sehingga interaksi pengguna tetap lancar dan cepat.
+
+2) AJAX mengirimkan permintaan HTTP ke view Django menggunakan JavaScript tanpa me-refresh halaman. View kemudian memproses data (misalnya dari form) dan mengembalikan respons dalam format JSON. JavaScript di sisi klien menangkap respons ini dan memperbarui elemen halaman secara dinamis berdasarkan data tersebut.
+
+3) Dengan AJAX, hanya data yang perlu diperbarui yang dikirim dan diterima, bukan seluruh halaman. Ini membuat proses lebih cepat, efisien, dan menghemat bandwidth, serta memberikan pengalaman interaktif yang lebih baik dibandingkan render penuh dari server.
+
+4) Untuk menjaga keamanan, Django menyediakan CSRF token yang wajib disertakan pada setiap request POST, termasuk melalui AJAX. Selain itu, data sensitif seperti password sebaiknya dikirim melalui koneksi HTTPS dan diproses menggunakan mekanisme autentikasi bawaan Django agar tidak mudah disalahgunakan.
+
+5) AJAX membuat website terasa lebih responsif karena perubahan konten bisa terjadi secara real-time tanpa reload. Hal ini meningkatkan kenyamanan, mengurangi waktu tunggu, dan memberikan pengalaman yang lebih halus dan interaktif bagi pengguna.

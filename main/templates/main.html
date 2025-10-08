@@ -3,10 +3,8 @@
 
 {% block meta %}
 <title>FirstTouch - Home</title>
-{% comment %} Tailwind CSS CDN - Pastikan ini ada di base.html Anda {% endcomment %}
 <script src="https://cdn.tailwindcss.com"></script> 
 <style>
-    /* Mengimpor font retro */
     @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
     @keyframes gridScroll {
@@ -14,36 +12,241 @@
         to { transform: translateY(40px); }
     }
 
-    /* [PERBAIKAN] CSS untuk grid di hero section */
     .hero-grid {
         position: absolute;
-        top: -20%; /* Memastikan grid menutupi bagian atas */
+        top: -20%;
         left: 0;
         right: 0;
         bottom: 0;
         z-index: 0;
-        
         background-image: 
             repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(0, 255, 255, 0.15) 39px, rgba(0, 255, 255, 0.15) 41px),
             repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(0, 255, 255, 0.15) 39px, rgba(0, 255, 255, 0.15) 41px);
-
-        /* Perspektif yang lebih kuat */
         transform: perspective(250px) rotateX(70deg); 
         transform-origin: bottom;
-
-        /* Animasi scroll yang halus */
         animation: gridScroll 1.5s linear infinite;
-
-        /* Efek memudar ke kejauhan */
         mask-image: linear-gradient(to top, black 30%, transparent 100%);
         -webkit-mask-image: linear-gradient(to top, black 30%, transparent 100%);
+    }
+
+    /* Toast Notification Styles */
+    .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        min-width: 300px;
+        padding: 16px 20px;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 255, 255, 0.2);
+        transform: translateX(400px);
+        opacity: 0;
+        transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        border: 2px solid;
+        font-family: 'Arial', sans-serif;
+        font-weight: 600;
+    }
+    
+    .toast.show {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    
+    .toast.success {
+        background: linear-gradient(135deg, #00ffff 0%, #00cccc 100%);
+        border-color: #00ffff;
+        color: #001a1a;
+    }
+    
+    .toast.error {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ff4444 100%);
+        border-color: #ff6b6b;
+        color: #ffffff;
+    }
+
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(5px);
+        animation: fadeIn 0.3s;
+    }
+
+    .modal.show {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    .modal-content {
+        background: linear-gradient(135deg, #0f2027 0%, #203a43 100%);
+        padding: 30px;
+        border-radius: 15px;
+        border: 2px solid #00ffff;
+        box-shadow: 0 0 40px rgba(0, 255, 255, 0.3);
+        max-width: 600px;
+        width: 90%;
+        max-height: 85vh;
+        overflow-y: auto;
+        animation: slideUp 0.3s;
+        position: relative;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .modal-content h2 {
+        font-family: 'Press Start 2P', cursive;
+        color: #00ffff;
+        text-shadow: 0 0 10px #00ffff;
+        margin-bottom: 25px;
+        font-size: 20px;
+    }
+
+    .modal-content label {
+        color: #00ffff;
+        font-weight: bold;
+        display: block;
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+
+    .modal-content input,
+    .modal-content textarea,
+    .modal-content select {
+        width: 100%;
+        padding: 12px;
+        background: rgba(0, 0, 0, 0.4);
+        border: 2px solid #00ffff;
+        border-radius: 8px;
+        color: #ffffff;
+        margin-bottom: 15px;
+        transition: all 0.3s;
+    }
+
+    .modal-content input:focus,
+    .modal-content textarea:focus,
+    .modal-content select:focus {
+        outline: none;
+        border-color: #ff6b6b;
+        box-shadow: 0 0 15px rgba(255, 107, 107, 0.5);
+    }
+
+    .modal-content textarea {
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    .btn-retro {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #00ffff 0%, #00cccc 100%);
+        color: #001a1a;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(0, 255, 255, 0.5);
+    }
+
+    .btn-danger {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ff4444 100%);
+        color: #ffffff;
+    }
+
+    .btn-danger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(255, 107, 107, 0.5);
+    }
+
+    .btn-secondary {
+        background: rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+        border: 2px solid #ffffff;
+    }
+
+    .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Loading Spinner */
+    .loader {
+        border: 4px solid rgba(0, 255, 255, 0.1);
+        border-left-color: #00ffff;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* Confirmation Modal */
+    .confirm-modal .modal-content {
+        max-width: 400px;
+        text-align: center;
+    }
+
+    .confirm-modal .modal-content p {
+        color: #ffffff;
+        margin-bottom: 25px;
+        font-size: 16px;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #00ffff;
+    }
+
+    .empty-state h3 {
+        font-family: 'Press Start 2P', cursive;
+        font-size: 18px;
+        margin-bottom: 15px;
+        text-shadow: 0 0 10px #00ffff;
+    }
+
+    .empty-state p {
+        color: rgba(0, 255, 255, 0.7);
+        font-size: 14px;
     }
 </style>
 {% endblock meta %}
 
 {% block content %}
 <div class="bg-white">
-
+    <!-- Navigation -->
     <nav class="bg-gray-900 shadow-lg fixed w-full z-20 top-0">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
@@ -51,7 +254,12 @@
                     <a href="#" class="text-white text-2xl" style="font-family: 'Press Start 2P', cursive; text-shadow: 0 0 8px rgba(0, 255, 255, 0.7);">FirstTouch</a>
                 </div>
                 <div class="flex items-center space-x-6">
-                    <a href="{% url 'main:add_product' %}" class="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700 transition-colors">+ Add Product</a>
+                    <button onclick="openCreateModal()" class="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700 transition-colors">
+                        + Add Product
+                    </button>
+                    <button onclick="refreshProducts()" class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors">
+                        🔄 Refresh
+                    </button>
                     <div class="relative group">
                         <button class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                             Welcome, {{ name }}
@@ -60,7 +268,7 @@
                             <div class="px-4 py-2 text-sm text-gray-700"><b>NPM:</b> {{ npm }}</div>
                             <div class="px-4 py-2 text-sm text-gray-700"><b>Class:</b> {{ class }}</div>
                             <div class="border-t border-gray-100"></div>
-                            <a href="{% url 'main:logout' %}" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Logout</a>
+                            <button onclick="handleLogout()" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Logout</button>
                         </div>
                     </div>
                 </div>
@@ -68,38 +276,399 @@
         </div>
     </nav>
 
+    <!-- Hero Section -->
     <section class="relative bg-gray-900 h-[60vh] flex items-center justify-center text-white pt-16 overflow-hidden">
         <div class="hero-grid"></div>
-        
         <div class="relative z-10 text-center px-4">
             <h1 class="text-5xl md:text-6xl" style="font-family: 'Press Start 2P', cursive; text-shadow: 0 0 10px #00ffff, 3px 3px 0 #ff6b6b;">Welcome to FirstTouch</h1>
             <p class="text-lg md:text-xl text-cyan-300 mt-4" style="font-family: monospace;">Find your favorite classic football kits and gear.</p>
         </div>
     </section>
 
+    <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Filter Buttons -->
         <div class="flex items-center space-x-4 mb-8 pb-4 border-b border-gray-200">
-             <a href="?filter=all" class="font-medium px-4 py-2 rounded-md {% if request.GET.filter != 'my' %}bg-green-600 text-white shadow{% else %}text-gray-600 hover:bg-gray-100{% endif %}">
+            <button onclick="filterProducts('all')" id="filter-all" class="font-medium px-4 py-2 rounded-md bg-green-600 text-white shadow">
                 All Products
-            </a>
-            <a href="?filter=my" class="font-medium px-4 py-2 rounded-md {% if request.GET.filter == 'my' %}bg-green-600 text-white shadow{% else %}text-gray-600 hover:bg-gray-100{% endif %}">
+            </button>
+            <button onclick="filterProducts('my')" id="filter-my" class="font-medium px-4 py-2 rounded-md text-gray-600 hover:bg-gray-100">
                 My Products
-            </a> 
+            </button>
         </div>
 
-        {% if not product_list %}
-            <div class="text-center py-16">
-                <h3 class="text-xl font-semibold text-gray-800">No Products Found</h3>
-                <p class="text-gray-500 mt-2">There are no products to display at the moment.</p>
+        <!-- Products Container -->
+        <div id="product-container">
+            <!-- Loading State -->
+            <div id="loading-state" class="flex justify-center items-center py-20">
+                <div class="loader"></div>
             </div>
-        {% else %}
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                {% for product in product_list %}
-                    {% include 'card_product.html' with product=product %}
-                {% endfor %}
-            </div>
-        {% endif %}
-    </main>
 
+            <!-- Empty State -->
+            <div id="empty-state" class="empty-state" style="display: none;">
+                <h3>⚽ NO PRODUCTS FOUND</h3>
+                <p>There are no products to display at the moment.</p>
+                <button onclick="openCreateModal()" class="btn-retro btn-primary mt-6">
+                    Add Your First Product
+                </button>
+            </div>
+
+            <!-- Error State -->
+            <div id="error-state" class="empty-state" style="display: none;">
+                <h3>❌ ERROR LOADING PRODUCTS</h3>
+                <p>Something went wrong. Please try again.</p>
+                <button onclick="refreshProducts()" class="btn-retro btn-primary mt-6">
+                    Try Again
+                </button>
+            </div>
+
+            <!-- Products Grid -->
+            <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            </div>
+        </div>
+    </main>
 </div>
+
+<!-- Create/Edit Product Modal -->
+<div id="productModal" class="modal">
+    <div class="modal-content">
+        <h2 id="modal-title">ADD PRODUCT</h2>
+        <form id="productForm" onsubmit="handleFormSubmit(event)">
+            {% csrf_token %}
+            <input type="hidden" id="product-id" value="">
+            
+            <label for="name">Product Name*</label>
+            <input type="text" id="name" name="name" required>
+            
+            <label for="price">Price*</label>
+            <input type="number" id="price" name="price" required min="0">
+            
+            <label for="category">Category*</label>
+            <select id="category" name="category" required>
+                <option value="">-- Select Category --</option>
+                <option value="apparel">Apparel</option>
+                <option value="footwear">Footwear</option>
+                <option value="equipment">Equipment</option>
+                <option value="accessories">Accessories</option>
+                <option value="merch">Merchandise</option>
+            </select>
+            
+            <label for="thumbnail">Thumbnail URL</label>
+            <input type="url" id="thumbnail" name="thumbnail">
+            
+            <label for="stock">Stock*</label>
+            <input type="number" id="stock" name="stock" required min="0" value="0">
+            
+            <label for="brand">Brand</label>
+            <input type="text" id="brand" name="brand">
+            
+            <label for="description">Description*</label>
+            <textarea id="description" name="description" required></textarea>
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display: inline-flex; align-items: center; cursor: pointer;">
+                    <input type="checkbox" id="is_featured" name="is_featured" style="width: auto; margin-right: 8px;">
+                    <span>Featured Product</span>
+                </label>
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-top: 25px;">
+                <button type="submit" class="btn-retro btn-primary" style="flex: 1;">
+                    Save Product
+                </button>
+                <button type="button" onclick="closeModal()" class="btn-retro btn-secondary">
+                    Cancel
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="modal confirm-modal">
+    <div class="modal-content">
+        <h2>⚠️ CONFIRM DELETE</h2>
+        <p>Are you sure you want to delete this product? This action cannot be undone.</p>
+        <div style="display: flex; gap: 10px; justify-content: center;">
+            <button onclick="confirmDelete()" class="btn-retro btn-danger">
+                Yes, Delete
+            </button>
+            <button onclick="closeDeleteModal()" class="btn-retro btn-secondary">
+                Cancel
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentFilter = 'all';
+    let productToDelete = null;
+
+    // Show toast notification
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => toast.classList.add('show'), 100);
+        
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 400);
+        }, 3000);
+    }
+
+    // Get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Fetch and display products
+    async function fetchProducts(filter = 'all') {
+        const loadingState = document.getElementById('loading-state');
+        const emptyState = document.getElementById('empty-state');
+        const errorState = document.getElementById('error-state');
+        const productsGrid = document.getElementById('products-grid');
+        
+        loadingState.style.display = 'flex';
+        emptyState.style.display = 'none';
+        errorState.style.display = 'none';
+        productsGrid.innerHTML = '';
+        
+        try {
+            const response = await fetch(`/api/products/?filter=${filter}`);
+            
+            if (!response.ok) throw new Error('Failed to fetch products');
+            
+            const products = await response.json();
+            loadingState.style.display = 'none';
+            
+            if (products.length === 0) {
+                emptyState.style.display = 'block';
+            } else {
+                displayProducts(products);
+            }
+        } catch (error) {
+            console.error('Error fetching products:', error);
+            loadingState.style.display = 'none';
+            errorState.style.display = 'block';
+        }
+    }
+
+    // Display products in grid
+    function displayProducts(products) {
+        const productsGrid = document.getElementById('products-grid');
+        productsGrid.innerHTML = '';
+        
+        products.forEach(item => {
+            const product = item.fields;
+            const productId = item.pk;
+            const isOwner = '{{ request.user.id }}' == product.user;
+            
+            const card = document.createElement('div');
+            card.className = 'bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300';
+            card.innerHTML = `
+                <div class="relative">
+                    <img src="${product.thumbnail || 'https://via.placeholder.com/300x200?text=No+Image'}" 
+                         alt="${product.name}" 
+                         class="w-full h-48 object-cover">
+                    ${product.is_featured ? '<span class="absolute top-2 right-2 bg-yellow-400 text-gray-900 text-xs font-bold px-2 py-1 rounded">⭐ FEATURED</span>' : ''}
+                </div>
+                <div class="p-4">
+                    <h3 class="text-lg font-bold text-gray-800 mb-2 line-clamp-1">${product.name}</h3>
+                    <p class="text-2xl font-bold text-green-600 mb-2">Rp ${parseInt(product.price).toLocaleString('id-ID')}</p>
+                    <div class="flex items-center justify-between text-sm text-gray-600 mb-3">
+                        <span class="bg-gray-100 px-2 py-1 rounded">${product.category}</span>
+                        <span>Stock: ${product.stock}</span>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-4 line-clamp-2">${product.description}</p>
+                    ${isOwner ? `
+                    <div class="flex gap-2">
+                        <button onclick="openEditModal('${productId}')" class="flex-1 bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition-colors text-sm font-medium">
+                            Edit
+                        </button>
+                        <button onclick="openDeleteModal('${productId}')" class="flex-1 bg-red-500 text-white py-2 rounded hover:bg-red-600 transition-colors text-sm font-medium">
+                            Delete
+                        </button>
+                    </div>
+                    ` : `
+                    <a href="/product/${productId}/" class="block bg-green-600 text-white text-center py-2 rounded hover:bg-green-700 transition-colors text-sm font-medium">
+                        View Details
+                    </a>
+                    `}
+                </div>
+            `;
+            productsGrid.appendChild(card);
+        });
+    }
+
+    // Filter products
+    function filterProducts(filter) {
+        currentFilter = filter;
+        
+        document.getElementById('filter-all').className = filter === 'all' 
+            ? 'font-medium px-4 py-2 rounded-md bg-green-600 text-white shadow'
+            : 'font-medium px-4 py-2 rounded-md text-gray-600 hover:bg-gray-100';
+        
+        document.getElementById('filter-my').className = filter === 'my'
+            ? 'font-medium px-4 py-2 rounded-md bg-green-600 text-white shadow'
+            : 'font-medium px-4 py-2 rounded-md text-gray-600 hover:bg-gray-100';
+        
+        fetchProducts(filter);
+    }
+
+    // Refresh products
+    function refreshProducts() {
+        showToast('Refreshing products...', 'success');
+        fetchProducts(currentFilter);
+    }
+
+    // Handle logout
+    function handleLogout() {
+        showToast('Logging out...', 'success');
+        setTimeout(() => {
+            window.location.href = '{% url "main:logout" %}';
+        }, 800);
+    }
+
+    // Open create modal
+    function openCreateModal() {
+        document.getElementById('modal-title').textContent = 'ADD PRODUCT';
+        document.getElementById('productForm').reset();
+        document.getElementById('product-id').value = '';
+        document.getElementById('productModal').classList.add('show');
+    }
+
+    // Open edit modal
+    async function openEditModal(productId) {
+        document.getElementById('modal-title').textContent = 'EDIT PRODUCT';
+        document.getElementById('product-id').value = productId;
+        
+        try {
+            const response = await fetch(`/json/${productId}/`);
+            const data = await response.json();
+            const product = data[0].fields;
+            
+            document.getElementById('name').value = product.name;
+            document.getElementById('price').value = product.price;
+            document.getElementById('category').value = product.category;
+            document.getElementById('thumbnail').value = product.thumbnail || '';
+            document.getElementById('stock').value = product.stock;
+            document.getElementById('brand').value = product.brand || '';
+            document.getElementById('description').value = product.description;
+            document.getElementById('is_featured').checked = product.is_featured;
+            
+            document.getElementById('productModal').classList.add('show');
+        } catch (error) {
+            showToast('Failed to load product data', 'error');
+        }
+    }
+
+    // Close modal
+    function closeModal() {
+        document.getElementById('productModal').classList.remove('show');
+    }
+
+    // Handle form submit
+    async function handleFormSubmit(event) {
+        event.preventDefault();
+        
+        const productId = document.getElementById('product-id').value;
+        const formData = new FormData(event.target);
+        
+        const url = productId 
+            ? `/api/products/${productId}/update/`
+            : '/api/products/create/';
+        
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                showToast(data.message, 'success');
+                closeModal();
+                fetchProducts(currentFilter);
+            } else {
+                showToast(data.message || 'Failed to save product', 'error');
+            }
+        } catch (error) {
+            showToast('An error occurred', 'error');
+        }
+    }
+
+    // Open delete modal
+    function openDeleteModal(productId) {
+        productToDelete = productId;
+        document.getElementById('deleteModal').classList.add('show');
+    }
+
+    // Close delete modal
+    function closeDeleteModal() {
+        productToDelete = null;
+        document.getElementById('deleteModal').classList.remove('show');
+    }
+
+    // Confirm delete
+    async function confirmDelete() {
+        if (!productToDelete) return;
+        
+        try {
+            const response = await fetch(`/api/products/${productToDelete}/delete/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                showToast(data.message, 'success');
+                closeDeleteModal();
+                fetchProducts(currentFilter);
+            } else {
+                showToast(data.message || 'Failed to delete product', 'error');
+            }
+        } catch (error) {
+            showToast('An error occurred', 'error');
+        }
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        const productModal = document.getElementById('productModal');
+        const deleteModal = document.getElementById('deleteModal');
+        
+        if (event.target === productModal) {
+            closeModal();
+        }
+        if (event.target === deleteModal) {
+            closeDeleteModal();
+        }
+    }
+
+    // Load products on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchProducts(currentFilter);
+    });
+</script>
 {% endblock content %}

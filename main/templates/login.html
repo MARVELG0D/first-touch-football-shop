@@ -127,6 +127,12 @@
         transform: translateY(-2px);
         box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
     }
+
+    .login_btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
     
     .login .register-link {
         color: #00ffff;
@@ -145,6 +151,41 @@
     
     .login a:hover { color: #fff; }
 
+    /* Toast */
+    .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        min-width: 300px;
+        padding: 16px 20px;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 255, 255, 0.2);
+        transform: translateX(400px);
+        opacity: 0;
+        transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        border: 2px solid;
+        font-family: 'Arial', sans-serif;
+        font-weight: 600;
+    }
+    
+    .toast.show {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    
+    .toast.success {
+        background: linear-gradient(135deg, #00ffff 0%, #00cccc 100%);
+        border-color: #00ffff;
+        color: #001a1a;
+    }
+    
+    .toast.error {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ff4444 100%);
+        border-color: #ff6b6b;
+        color: #ffffff;
+    }
+
 </style>
 {% endblock meta %}
 
@@ -152,26 +193,24 @@
 <div class="login">
     <h1>LOGIN</h1>
 
-    <form method="POST" action="">
+    <form id="loginForm" onsubmit="handleLogin(event)">
         {% csrf_token %}
 
-        {% for field in form %}
         <div class="form-field">
-            {{ field.label_tag }}
-            {{ field }}
-            {% for error in field.errors %}
-                <div class="errorlist">{{ error }}</div>
-            {% endfor %}
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required>
         </div>
-        {% endfor %}
 
-        {% if form.non_field_errors %}
-            {% for error in form.non_field_errors %}
-                <div class="errorlist" style="margin-bottom: 20px;">{{ error }}</div>
-            {% endfor %}
-        {% endif %}
+        <div class="form-field">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+        </div>
 
-        <input class="btn login_btn" type="submit" value="Login" />
+        <div id="error-message" class="errorlist" style="display: none; margin-bottom: 15px;"></div>
+
+        <button type="submit" class="btn login_btn" id="loginBtn">
+            Login
+        </button>
     </form>
     
     <div class="register-link">
@@ -179,5 +218,79 @@
         <a href="{% url 'main:register' %}">Register Now</a>
     </div>
 </div>
+
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => toast.classList.add('show'), 100);
+        
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 400);
+        }, 3000);
+    }
+
+    async function handleLogin(event) {
+        event.preventDefault();
+        
+        const loginBtn = document.getElementById('loginBtn');
+        const errorMessage = document.getElementById('error-message');
+        const formData = new FormData(event.target);
+        
+        loginBtn.disabled = true;
+        loginBtn.textContent = 'Logging in...';
+        errorMessage.style.display = 'none';
+        
+        try {
+            const response = await fetch('/api/login/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                showToast('🎉 ' + data.message, 'success');
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 1000);
+            } else {
+                errorMessage.textContent = data.message;
+                errorMessage.style.display = 'block';
+                showToast(data.message, 'error');
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Login';
+            }
+        } catch (error) {
+            errorMessage.textContent = 'An error occurred. Please try again.';
+            errorMessage.style.display = 'block';
+            showToast('Connection error', 'error');
+            loginBtn.disabled = false;
+            loginBtn.textContent = 'Login';
+        }
+    }
+</script>
 
 {% endblock content %}

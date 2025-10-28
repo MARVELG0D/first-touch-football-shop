@@ -311,7 +311,7 @@
             const data = await response.json();
             
             if (response.ok) {
-                showToast('🎉 ' + data.message, 'success');
+                showToast(data.message, 'success');
                 setTimeout(() => {
                     window.location.href = '/login/';
                 }, 1500);

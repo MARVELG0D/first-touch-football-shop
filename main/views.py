@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from main.forms import ProductForm
-from main.models import Product
+from main.forms import ProductForm, NewsForm
+from main.models import Product, News
 from django.http import HttpResponse, JsonResponse
 from django.core import serializers
 from django.contrib import messages
@@ -29,13 +29,30 @@ def show_main(request):
 @login_required(login_url='/login')
 def get_products_json(request):
     filter_type = request.GET.get("filter", "all")
-    
+
     if filter_type == "my":
         products = Product.objects.filter(user=request.user)
     else:
         products = Product.objects.all()
-    
-    return HttpResponse(serializers.serialize('json', products), content_type="application/json")
+
+    data = [
+        {
+            'id': str(product.id),
+            'name': product.name,
+            'price': product.price,
+            'description': product.description,
+            'category': product.category,
+            'thumbnail': product.thumbnail,
+            'is_featured': product.is_featured,
+            'rating': product.rating,
+            'stock': product.stock,
+            'brand': product.brand,
+            'user_id': product.user_id,
+        }
+        for product in products
+    ]
+
+    return JsonResponse(data, safe=False)
 
 # AJAX endpoint to create product
 @login_required(login_url='/login')
@@ -43,15 +60,16 @@ def get_products_json(request):
 @require_POST
 def create_product_ajax(request):
     try:
-        name = request.POST.get("name")
-        price = request.POST.get("price")
-        description = request.POST.get("description")
-        category = request.POST.get("category")
-        thumbnail = request.POST.get("thumbnail")
-        stock = request.POST.get("stock")
-        brand = request.POST.get("brand")
-        is_featured = request.POST.get("is_featured") == "on"
-        
+        data = json.loads(request.body)
+        name = data.get("name")
+        price = data.get("price")
+        description = data.get("description")
+        category = data.get("category")
+        thumbnail = data.get("thumbnail")
+        stock = data.get("stock")
+        brand = data.get("brand")
+        is_featured = data.get("is_featured", False)
+
         new_product = Product.objects.create(
             user=request.user,
             name=name,
@@ -63,7 +81,7 @@ def create_product_ajax(request):
             brand=brand,
             is_featured=is_featured
         )
-        
+
         return JsonResponse({
             "status": "success",
             "message": "Product created successfully!",
@@ -86,24 +104,25 @@ def create_product_ajax(request):
 def update_product_ajax(request, id):
     try:
         product = get_object_or_404(Product, pk=id)
-        
+
         if request.user != product.user:
             return JsonResponse({
                 "status": "error",
                 "message": "You are not authorized to edit this product."
             }, status=403)
-        
-        product.name = request.POST.get("name", product.name)
-        product.price = request.POST.get("price", product.price)
-        product.description = request.POST.get("description", product.description)
-        product.category = request.POST.get("category", product.category)
-        product.thumbnail = request.POST.get("thumbnail", product.thumbnail)
-        product.stock = request.POST.get("stock", product.stock)
-        product.brand = request.POST.get("brand", product.brand)
-        product.is_featured = request.POST.get("is_featured") == "on"
-        
+
+        data = json.loads(request.body)
+        product.name = data.get("name", product.name)
+        product.price = data.get("price", product.price)
+        product.description = data.get("description", product.description)
+        product.category = data.get("category", product.category)
+        product.thumbnail = data.get("thumbnail", product.thumbnail)
+        product.stock = data.get("stock", product.stock)
+        product.brand = data.get("brand", product.brand)
+        product.is_featured = data.get("is_featured", product.is_featured)
+
         product.save()
-        
+
         return JsonResponse({
             "status": "success",
             "message": f"Product '{product.name}' updated successfully!"
@@ -324,3 +343,162 @@ def delete_product(request, id):
         messages.error(request, "You are not authorized to delete this product.")
         
     return HttpResponseRedirect(reverse('main:show_main'))
+
+# News views
+@login_required(login_url='/login')
+def show_news(request):
+    filter_type = request.GET.get("filter", "all")  # default 'all'
+
+    if filter_type == "all":
+        news_list = News.objects.all()
+    else:
+        news_list = News.objects.filter(user=request.user)
+
+    context = {
+        'news_list': news_list,
+    }
+    return render(request, "news.html", context)
+
+def create_news(request):
+    form = NewsForm(request.POST or None)
+
+    if form.is_valid() and request.method == 'POST':
+        news_entry = form.save(commit = False)
+        news_entry.user = request.user
+        news_entry.save()
+        return redirect('main:show_news')
+
+    context = {
+        'form': form
+    }
+
+    return render(request, "create_news.html", context)
+
+@login_required(login_url='/login')
+def show_news_detail(request, id):
+    news = get_object_or_404(News, pk=id)
+    news.increment_views()
+
+    context = {
+        'news': news
+    }
+
+    return render(request, "news_detail.html", context)
+
+def show_news_xml(request):
+    news_list = News.objects.all()
+    xml_data = serializers.serialize("xml", news_list)
+    return HttpResponse(xml_data, content_type="application/xml")
+
+def show_news_json(request):
+    news_list = News.objects.all()
+    data = [
+        {
+            'id': str(news.id),
+            'title': news.title,
+            'content': news.content,
+            'category': news.category,
+            'thumbnail': news.thumbnail,
+            'news_views': news.news_views,
+            'created_at': news.created_at.isoformat() if news.created_at else None,
+            'is_featured': news.is_featured,
+            'user_id': news.user_id,
+        }
+        for news in news_list
+    ]
+
+    return JsonResponse(data, safe=False)
+
+def show_news_xml_by_id(request, news_id):
+    try:
+        news_item = News.objects.filter(pk=news_id)
+        xml_data = serializers.serialize("xml", news_item)
+        return HttpResponse(xml_data, content_type="application/xml")
+    except News.DoesNotExist:
+        return HttpResponse(status=404)
+
+def show_news_json_by_id(request, news_id):
+    try:
+        news = News.objects.select_related('user').get(pk=news_id)
+        data = {
+            'id': str(news.id),
+            'title': news.title,
+            'content': news.content,
+            'category': news.category,
+            'thumbnail': news.thumbnail,
+            'news_views': news.news_views,
+            'created_at': news.created_at.isoformat() if news.created_at else None,
+            'is_featured': news.is_featured,
+            'user_id': news.user_id,
+            'user_username': news.user.username if news.user_id else None,
+        }
+        return JsonResponse(data)
+    except News.DoesNotExist:
+        return JsonResponse({'detail': 'Not found'}, status=404)
+
+@login_required(login_url='/login')
+def edit_news(request, id):
+    news = get_object_or_404(News, pk=id)
+    form = NewsForm(request.POST or None, instance=news)
+    if form.is_valid() and request.method == 'POST':
+        form.save()
+        return redirect('main:show_news')
+
+    context = {
+        'form': form
+    }
+
+    return render(request, "edit_news.html", context)
+
+@login_required(login_url='/login')
+def delete_news(request, id):
+    news = get_object_or_404(News, pk=id)
+    news.delete()
+    return HttpResponseRedirect(reverse('main:show_news'))
+
+@csrf_exempt
+@require_POST
+def add_news_entry_ajax(request):
+    title = strip_tags(request.POST.get("title")) # strip HTML tags!
+    content = strip_tags(request.POST.get("content")) # strip HTML tags!
+    category = request.POST.get("category")
+    thumbnail = request.POST.get("thumbnail")
+    is_featured = request.POST.get("is_featured") == 'on'  # checkbox handling
+    user = request.user
+
+    new_news = News(
+        title=title,
+        content=content,
+        category=category,
+        thumbnail=thumbnail,
+        is_featured=is_featured,
+        user=user
+    )
+    new_news.save()
+
+    return HttpResponse(b"CREATED", status=201)
+
+@csrf_exempt
+def create_news_flutter(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        title = strip_tags(data.get("title", ""))  # Strip HTML tags
+        content = strip_tags(data.get("content", ""))  # Strip HTML tags
+        category = data.get("category", "")
+        thumbnail = data.get("thumbnail", "")
+        is_featured = data.get("is_featured", False)
+        user = request.user
+
+        new_news = News(
+            title=title,
+            content=content,
+            category=category,
+            thumbnail=thumbnail,
+            is_featured=is_featured,
+            user=user
+        )
+        new_news.save()
+
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
